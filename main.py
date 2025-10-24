@@ -1,5 +1,9 @@
 from fastapi import FastAPI, Path
 from pydantic import BaseModel
+from typing import Optional, Literal
+from pydantic import Field
+from fastapi import HTTPException
+
 
 # creates your fastapi instance
 app = FastAPI()
@@ -22,10 +26,16 @@ app = FastAPI()
 tasks = []
 task_id_counter = 1
 
-class Task(BaseModel):
-    id: Optional[int] = None
+class TaskCreate(BaseModel):
     title: str
     description: Optional[str] = None
+    completed: bool = False
+    priority: Literal["low", "medium", "high"] = "medium"
+
+class TaskResponse(BaseModel):
+    id: int
+    title: str
+    description: str = Field(None, max_length=300)
     completed: bool = False
     priority: Literal["low", "medium", "high"] = "medium"
 
@@ -78,7 +88,7 @@ def get_task_by_id(task_id: int = Path(..., description="The ID of the task to g
     for task in tasks:
         if task["id"] == task_id:
             return task
-    return {"error": "Task not found"}
+    raise HTTPException(status_code=404, detail="Task not found") 
 
 
 @app.post("/tasks")
