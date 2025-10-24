@@ -27,6 +27,7 @@ class Task(BaseModel):
     title: str
     description: Optional[str] = None
     completed: bool = False
+    priority: Literal["low", "medium", "high"] = "medium"
 
 # @app.get("/")
 # def read_root():
@@ -118,3 +119,36 @@ def completed_tasks():
             completed_list.append(pakadneka)
 
     return completed_list
+
+@app.get("/tasks/priority/{priority_level}")
+def tasks_by_priority(priority_level: str):
+    valid_priorities = ["low", "medium", "high"]
+    if priority_level.lower() not in valid_priorities:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Invalid priority. Must be one of: {valid_priorities}"
+        )
+    
+    priority_list = []
+    for pakadneka in tasks:
+        if pakadneka.priority.lower() == priority_level.lower():
+            priority_list.append(pakadneka)
+    
+    return priority_list
+
+# /tasks/2/priority
+# { 
+#     "priority": "high"
+# }
+
+@app.put("/tasks/{task_id}/priority")
+def update_task_priority(task_id: int, priority: str):
+    for pakadneka in tasks:
+        if pakadneka.id == task_id:
+            pakadneka.priority = priority
+            return {
+                "message": "Task priority updated",
+                "task": pakadneka
+            }
+        
+raise HTTPException(status_code=404, detail="Task not found")
