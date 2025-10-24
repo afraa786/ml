@@ -5,42 +5,116 @@ from pydantic import BaseModel
 app = FastAPI()
 
 # Sample data
-items = {
-    1: {
-        "Student Allotted": 1,
-        "name": "Java Book",
-        "price": 10.0
-    },
-    2: {
-        "Student Allotted": 2,
-        "name": "Datawarehousing and Mining",
-        "price": 12.5,
-        "is_available": False
-    },
-}
+# items = {
+#     1: {
+#         "Student Allotted": 1,
+#         "name": "Java Book",
+#         "price": 10.0
+#     },
+#     2: {
+#         "Student Allotted": 2,
+#         "name": "Datawarehousing and Mining",
+#         "price": 12.5,
+#         "is_available": False
+#     },
+# }
 
-# Pydantic model
-class Item(BaseModel):
-    name: str
-    price: float
-    is_available: bool = True
+tasks = []
+task_id_counter = 1
 
+class Task(BaseModel):
+    id: Optional[int] = None
+    title: str
+    description: Optional[str] = None
+    completed: bool = False
+
+# @app.get("/")
+# def read_root():
+#     return {"Hello": "World"}
+
+# @app.get("/students")
+# def getAllStudents():
+#     return items
+
+# @app.get("/students/{student_id}")
+# def get_student(
+#     student_id: int = Path(..., description="The ID of the student to get", gt=0)
+# ):
+   
+#     if student_id not in items:
+#         return {"error": "Student not found"}
+#     return items[student_id]
+
+
+@app.get("/search")
+def search(q: str, limit: int = 10):
+    return {
+        "query": q,
+        "limit": limit,
+        "results": [f"Result {i} for '{q}'" for i in range(1, limit + 1)]
+    }
+
+# @app.post("/users")
+# def create_user(user: User):
+#     return {
+#         "message": "User created successfully",
+#         "user": user,
+#         "is_adult": user.age >= 18
+#     }
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    return {"message": "Welcome to the Task Manager API"}
 
-@app.get("/students")
-def getAllStudents():
-    return items
+@app.get("/tasks")
+def get_all_tasks():
+    return {"tasks": tasks, "total": len(tasks)}
 
-@app.get("/students/{student_id}")
-def get_student(
-    student_id: int = Path(..., description="The ID of the student to get", gt=0)
-):
-   
-    if student_id not in items:
-        return {"error": "Student not found"}
-    return items[student_id]
+@app.get("/tasks/{task_id}")
+def get_task_by_id(task_id: int = Path(..., description="The ID of the task to get", gt=0)):
+
+# The loop says: "For each item in the tasks list, temporarily call it task and do something with it"
+    for task in tasks:
+        if task["id"] == task_id:
+            return task
+    return {"error": "Task not found"}
 
 
+@app.post("/tasks")
+def create_tasks(object: Task):
+    global task_id_counter # id pakad ke laye
+    task.id = task_id_counter
+    task_id_counter += 1 # le bhai teri id task ki
+    tasks.append(object.dict())
+    return {
+        "message": "Task created successfully",
+        "task": object
+    }
+
+@app.put("/tasks/{task_id}")
+def complete_task(task_id: int):
+    for pakadneka in tasks:
+        if pakadneka.id == task_id:
+            pakadneka.completed = True
+            return {
+                "message": "Task marked as completed",
+                "task": pakadneka
+            }
+        
+    return {"error": "Task not found"}
+    
+# Delete a task
+@app.delete("/tasks/{task_id}")
+def delete_task(task_id: int):
+    global tasks
+    tasks = [t for t in tasks if t.id != task_id]
+    return {"message": f"Task {task_id} deleted"}
+
+@app.get("/tasks/completed")
+def completed_tasks():
+    completed_list = []
+    for pakadneka in tasks:
+        if pakadneka.completed:
+            completed_list.append(pakadneka)
+
+    return completed_list
