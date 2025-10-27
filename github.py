@@ -14,7 +14,6 @@ user = fetch_user_data()      # Wait 2 seconds
    # Wait 2 seconds
 end = time.time()
 
-# ======================================================
 # to avoid this waiting time we use asynchronous coding
 # ======================================================
 
