@@ -76,7 +76,6 @@ try:
     forecast_data = weather_data["forecast"]["forecastday"][1]  # Next day
     
     # Get weather conditions for race time (usually 13:00 local time)
-    # You might need to adjust the hour based on race time
     race_hour_condition = forecast_data["hour"][13]  # 1 PM
     
     # Extract relevant weather parameters
@@ -112,7 +111,7 @@ if rain_probability >= 0.75:
 else:
     qualifying_2025["QualifyingTime"] = qualifying_2025["QualifyingTime (s)"]
 
-# add constructor's data
+# add constructor's data, right now uptill date
 team_points = {
     "McLaren": 800, "Mercedes": 459, "Red Bull": 426, "Williams": 137, "Ferrari": 382,
     "Haas": 73, "Aston Martin": 80, "Kick Sauber": 68, "Racing Bulls": 92, "Alpine": 22
@@ -130,7 +129,7 @@ driver_to_team = {
 qualifying_2025["Team"] = qualifying_2025["Driver"].map(driver_to_team)
 qualifying_2025["TeamPerformanceScore"] = qualifying_2025["Team"].map(team_performance_score)
 
-# merge qualifying and sector times data
+# merge qualifying and sector times data and lap
 merged_data = qualifying_2025.merge(sector_times_2024[["Driver", "TotalSectorTime (s)"]], on="Driver", how="left")
 merged_data["RainProbability"] = rain_probability
 merged_data["Temperature"] = temperature
@@ -171,11 +170,9 @@ print(f"🥇 P1: {podium.iloc[0]['Driver']}")
 print(f"🥈 P2: {podium.iloc[1]['Driver']}")
 print(f"🥉 P3: {podium.iloc[2]['Driver']}")
 
-# Model evaluation
 y_pred = model.predict(X_test)
-print(f"\n📈 Model Error (MAE): {mean_absolute_error(y_test, y_pred):.2f} seconds")
+print(f"\n Model Error (MAE): {mean_absolute_error(y_test, y_pred):.2f} seconds")
 
-# Plot feature importances
 feature_importance = model.feature_importances_
 features = X.columns
 
@@ -184,4 +181,5 @@ plt.barh(features, feature_importance, color='skyblue')
 plt.xlabel("Importance")
 plt.title("Feature Importance in Race Time Prediction")
 plt.tight_layout()
+
 plt.show()
