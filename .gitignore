@@ -11,3 +11,7 @@ fastf1_http_cache.sqlite
 f1_cache/ 
 *.sqlite 
 *.ff1pkl 
+
+agent_env/
+__pycache__/
+*.pyc
