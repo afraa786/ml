@@ -1,0 +1,10 @@
+The Wonderful Wizard of Oz
+
+Dorothy lived in Kansas with her Aunt Em and Uncle Henry. One day, a tornado swept Dorothy and her dog Toto to the magical land of Oz. 
+In Oz, Dorothy met the Scarecrow who wanted a brain, the Tin Woodman who wanted a heart, and the Cowardly Lion who wanted courage. 
+They traveled together to see the Wizard of Oz in the Emerald City, hoping he would grant their wishes. 
+Along the way, they faced challenges, but with friendship and courage, they overcame them. 
+In the end, Dorothy discovered that she had the power to return home all along, and she woke up back in Kansas, realizing that there’s no place like home."""
+
+# Write to a text file
+with open("wizard_of_oz.txt", "w", encoding="utf-8") as f:

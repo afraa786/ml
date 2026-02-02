@@ -1,0 +1,13 @@
+__pycache__
+venv
+.env
+.venv
+C:\Users\Afraa\OneDrive\文档\ml\venv
+# FastF1 auto-generated cache
+f1_cache/
+fastf1_http_cache.sqlite
+*.ff1pkl
+"f1_cache/" 
+f1_cache/ 
+*.sqlite 
+*.ff1pkl 
